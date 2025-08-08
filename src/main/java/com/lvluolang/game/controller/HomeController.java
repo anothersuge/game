@@ -108,7 +108,7 @@ public class HomeController {
     @PostMapping("/likeReview")
     @ResponseBody
     public String likeReview(@RequestParam Long reviewId) {
-        reviewService.likeReview(reviewId);
-        return "success";
+        boolean success = reviewService.likeReview(reviewId);
+        return success ? "success" : "already_liked";
     }
 }

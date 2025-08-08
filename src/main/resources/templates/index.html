@@ -312,6 +312,10 @@
                     return response.text();
                 })
                 .then(data => {
+                    if (data === 'already_liked') {
+                        // If already liked, revert the like count and keep the animation
+                        likeCountSpan.textContent = currentLikes;
+                    }
                     // Keep the animation for a moment
                     setTimeout(() => {
                         likeButton.classList.remove('liked');
@@ -319,7 +323,9 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('点赞失败，请重试。');
+                    // Revert the like count if request fails
+                    likeCountSpan.textContent = currentLikes;
+                    likeButton.classList.remove('liked');
                 });
             }
         });
