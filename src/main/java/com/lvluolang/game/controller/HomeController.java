@@ -104,4 +104,11 @@ public class HomeController {
         model.addAttribute("keyword", keyword);
         return "search";
     }
+    
+    @PostMapping("/likeReview")
+    @ResponseBody
+    public String likeReview(@RequestParam Long reviewId) {
+        reviewService.likeReview(reviewId);
+        return "success";
+    }
 }
