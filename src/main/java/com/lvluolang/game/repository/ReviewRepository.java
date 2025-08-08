@@ -1,0 +1,27 @@
+package com.lvluolang.game.repository;
+
+import com.lvluolang.game.entity.Review;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Long> {
+    
+    List<Review> findByGameId(Long gameId);
+    
+    List<Review> findByGameIdOrderByCreatedAtDesc(Long gameId);
+    
+    List<Review> findTop10ByOrderByLikesDesc();
+    
+    List<Review> findTop10ByOrderByCreatedAtDesc();
+    
+    @Query("SELECT r FROM Review r WHERE r.game.id = :gameId ORDER BY r.createdAt DESC")
+    List<Review> findRecentReviewsByGameId(@Param("gameId") Long gameId);
+    
+    @Query("SELECT r FROM Review r WHERE r.game.id = :gameId ORDER BY r.likes DESC")
+    List<Review> findPopularReviewsByGameId(@Param("gameId") Long gameId);
+}
