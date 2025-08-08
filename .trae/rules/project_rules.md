@@ -36,6 +36,19 @@
 缓存：Redis（用于排行榜、热门游戏等）
 日志：Logback + Spring Actuator
 部署：Docker + Nginx（可选）
+
+Nginx 配置：
+为了在生产环境中使用 80 端口访问应用，同时避免以 root 权限运行应用，可以使用 Nginx 作为反向代理。
+1. 将应用运行在 8080 端口（非特权端口）
+2. 配置 Nginx 监听 80 端口并将请求转发到 8080 端口
+3. Nginx 配置示例可在项目根目录的 nginx.conf 文件中找到
+
+敏感词过滤：
+系统实现了敏感词过滤功能，可以对用户名、游戏名和评论内容进行过滤。
+- 敏感词库文件位于 src/main/resources/sensitive-words.txt
+- 过滤器实现在 com.lvluolang.game.util.SensitiveWordFilter 类中
+- 当检测到敏感词时，系统会静默处理（不保存到数据库但返回成功响应）
+
 数据模型简要设计
 
 ✅ 非功能性需求
