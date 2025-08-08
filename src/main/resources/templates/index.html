@@ -342,7 +342,6 @@
             .then(response => response.text())
             .then(data => {
                 if (data === 'success') {
-                    alert('评价已成功提交！');
                     // Close the modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('addReviewModal'));
                     modal.hide();
@@ -350,6 +349,8 @@
                     document.getElementById('addReviewForm').reset();
                     // Reset star rating
                     $('#rating').rating('reset');
+                    // Refresh reviews section
+                    location.reload();
                 } else {
                     alert('提交失败，请重试。');
                 }

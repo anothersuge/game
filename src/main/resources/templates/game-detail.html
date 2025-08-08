@@ -429,13 +429,14 @@
             .then(response => response.text())
             .then(data => {
                 if (data === 'success') {
-                    alert('评价提交成功！');
                     // Close modal
                     bootstrap.Modal.getInstance(document.getElementById('addReviewModal')).hide();
                     // Reset form
                     document.getElementById('addReviewForm').reset();
                     // Reset star rating
                     $('#rating').rating('reset');
+                    // Refresh reviews section
+                    location.reload();
                 } else {
                     alert('评价提交失败');
                 }
