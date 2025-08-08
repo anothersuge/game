@@ -228,10 +228,7 @@
                             <div class="game-info" style="cursor: pointer;" onclick="window.location.href='/game?id=' + this.parentElement.parentElement.getAttribute('data-game-id')">
                                 <h5 class="game-name" th:text="${review.game.name}">游戏名称</h5>
                                 <div class="rating mb-3">
-                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
-                                        <i class="fas fa-star" th:if="${i <= review.rating}"></i>
-                                        <i class="far fa-star" th:if="${i > review.rating}"></i>
-                                    </span>
+                                    <input class="rating rating-loading" data-min="0" data-max="5" data-step="0.5" data-size="xs" data-show-clear="false" data-show-caption="false" th:value="${review.rating}" readonly>
                                 </div>
                                 <p class="review-content" th:text="${review.content}">评价内容</p>
                             </div>
@@ -292,6 +289,7 @@
         
         // Initialize star rating plugin
         $(document).ready(function() {
+            // Initialize the main rating input
             $('#rating').rating({
                 theme: 'krajee-svg',
                 filledStar: '<span class="krajee-icon krajee-icon-star"></span>',
@@ -299,6 +297,17 @@
                 containerClass: 'is-star',
                 showClear: false,
                 showCaption: false
+            });
+            
+            // Initialize read-only rating inputs in review cards
+            $('.review-card .rating input').rating({
+                theme: 'krajee-svg',
+                filledStar: '<span class="krajee-icon krajee-icon-star"></span>',
+                emptyStar: '<span class="krajee-icon krajee-icon-star"></span>',
+                containerClass: 'is-star',
+                showClear: false,
+                showCaption: false,
+                readonly: true
             });
         });
 
