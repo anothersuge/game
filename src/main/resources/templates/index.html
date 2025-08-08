@@ -257,6 +257,36 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Function to generate a consistent color based on username
+        function stringToColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            
+            let color = '#';
+            for (let i = 0; i < 3; i++) {
+                const value = (hash >> (i * 8)) & 0xFF;
+                color += ('00' + value.toString(16)).substr(-2);
+            }
+            
+            return color;
+        }
+        
+        // Apply background color to all avatars
+        function applyAvatarColors() {
+            const avatars = document.querySelectorAll('.avatar');
+            avatars.forEach(avatar => {
+                const username = avatar.textContent;
+                if (username) {
+                    avatar.style.backgroundColor = stringToColor(username);
+                }
+            });
+        }
+        
+        // Apply avatar colors when page loads
+        document.addEventListener('DOMContentLoaded', applyAvatarColors);
+        
         // Handle star rating
         document.addEventListener('click', function(e) {
             if (e.target.closest('.star')) {
