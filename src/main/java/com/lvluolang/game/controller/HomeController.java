@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class HomeController {
@@ -20,6 +23,47 @@ public class HomeController {
     
     @Autowired
     private ReviewService reviewService;
+    
+    @PostMapping("/submitReview")
+    @ResponseBody
+    public String submitReview(
+            @RequestParam String gameName,
+            @RequestParam String reviewerName,
+            @RequestParam Double rating,
+            @RequestParam String reviewContent) {
+        
+        // Check if game exists, if not create it
+        Optional<Game> existingGame = gameService.getAllGames().stream()
+                .filter(game -> game.getName().equals(gameName))
+                .findFirst();
+        
+        Game game;
+        if (existingGame.isPresent()) {
+            game = existingGame.get();
+        } else {
+            // Create new game
+            game = new Game();
+            game.setName(gameName);
+            game.setDescription("暂无描述");
+            game.setCoverImage("/images/default-cover.jpg");
+            game.setDeveloper("未知");
+            game.setPublisher("未知");
+            game.setGenre("未知");
+            game.setReleaseDate(java.time.LocalDateTime.now());
+            game = gameService.saveGame(game);
+        }
+        
+        // Create and save review
+        Review review = new Review();
+        review.setUsername(reviewerName);
+        review.setRating(rating);
+        review.setContent(reviewContent);
+        review.setGame(game);
+        
+        reviewService.saveReview(review);
+        
+        return "success";
+    }
     
     @GetMapping("/")
     public String home(Model model) {
