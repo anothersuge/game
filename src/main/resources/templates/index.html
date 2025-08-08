@@ -110,6 +110,39 @@
             align-items: center;
             gap: 8px;
         }
+        
+        /* Star rating styles */
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .star {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+        
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+        }
+        
+        .star.half-active {
+            color: #ffc107;
+        }
+        
+        .star.half-active i.far {
+            position: relative;
+        }
+        
+        .star.half-active i.far:before {
+            content: "\f089"; /* fas fa-star-half-alt */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+        }
     </style>
 </head>
 <body>
@@ -148,20 +181,15 @@
                             <input type="text" class="form-control" id="reviewerName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="rating" class="form-label">评分</label>
-                            <select class="form-select" id="rating" required>
-                                <option value="">请选择评分</option>
-                                <option value="0.5">0.5星</option>
-                                <option value="1">1星</option>
-                                <option value="1.5">1.5星</option>
-                                <option value="2">2星</option>
-                                <option value="2.5">2.5星</option>
-                                <option value="3">3星</option>
-                                <option value="3.5">3.5星</option>
-                                <option value="4">4星</option>
-                                <option value="4.5">4.5星</option>
-                                <option value="5">5星</option>
-                            </select>
+                            <label class="form-label">评分</label>
+                            <div class="rating-stars">
+                                 <input type="hidden" id="rating" name="rating" value="0">
+                                 <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                                 <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                                 <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                                 <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                                 <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="reviewContent" class="form-label">评论内容</label>
@@ -229,6 +257,58 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Handle star rating
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.star')) {
+                const star = e.target.closest('.star');
+                const starIndex = Array.from(star.parentElement.children).indexOf(star);
+                const stars = document.querySelectorAll('.star');
+                const ratingInput = document.getElementById('rating');
+                
+                // Calculate rating value (0.5 intervals)
+                let ratingValue = 0;
+                
+                // Check if click is on left or right half of the star
+                const rect = star.getBoundingClientRect();
+                const isLeftHalf = e.clientX < rect.left + rect.width / 2;
+                
+                if (isLeftHalf) {
+                    ratingValue = starIndex + 0.5;
+                } else {
+                    ratingValue = starIndex + 1;
+                }
+                
+                // Update hidden input value
+                ratingInput.value = ratingValue;
+                
+                // Update star styles
+                stars.forEach((s, index) => {
+                    const icon = s.querySelector('i');
+                    
+                    // Reset classes
+                    s.classList.remove('active', 'half-active');
+                    icon.className = 'far fa-star';
+                    
+                    // Add appropriate classes based on rating
+                    if (index < starIndex) {
+                        // Full star
+                        s.classList.add('active');
+                        icon.className = 'fas fa-star';
+                    } else if (index === starIndex) {
+                        if (isLeftHalf) {
+                            // Half star
+                            s.classList.add('half-active');
+                            icon.className = 'far fa-star';
+                        } else {
+                            // Full star
+                            s.classList.add('active');
+                            icon.className = 'fas fa-star';
+                        }
+                    }
+                });
+            }
+        });
+
         // Handle review submission
         document.getElementById('submitReview').addEventListener('click', function() {
             // Get form values
@@ -247,12 +327,12 @@
             fetch('/submitReview', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: new URLSearchParams({
+                body: JSON.stringify({
                     gameName: gameName,
                     reviewerName: reviewerName,
-                    rating: rating,
+                    rating: parseFloat(rating),
                     reviewContent: reviewContent
                 })
             })

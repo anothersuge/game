@@ -7,12 +7,10 @@ import com.lvluolang.game.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -26,11 +24,13 @@ public class HomeController {
     
     @PostMapping("/submitReview")
     @ResponseBody
-    public String submitReview(
-            @RequestParam String gameName,
-            @RequestParam String reviewerName,
-            @RequestParam Double rating,
-            @RequestParam String reviewContent) {
+    public String submitReview(@RequestBody Map<String, Object> requestBody) {
+        
+        // Extract data from JSON request body
+        String gameName = (String) requestBody.get("gameName");
+        String reviewerName = (String) requestBody.get("reviewerName");
+        Double rating = ((Number) requestBody.get("rating")).doubleValue();
+        String reviewContent = (String) requestBody.get("reviewContent");
         
         // Check if game exists, if not create it
         Optional<Game> existingGame = gameService.getAllGames().stream()
