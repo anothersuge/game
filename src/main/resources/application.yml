@@ -5,6 +5,11 @@ server:
 spring:
   application:
     name: game
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
   datasource:
     url: jdbc:sqlite:game.db
     driver-class-name: org.sqlite.JDBC
