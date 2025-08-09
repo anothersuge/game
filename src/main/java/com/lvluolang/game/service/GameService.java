@@ -57,25 +57,21 @@ public class GameService {
      * @return The existing or newly created game
      */
     public Game getOrCreateGame(String gameName) {
-        // Check if game exists
-        Optional<Game> existingGame = getAllGames().stream()
+        return getAllGames().stream()
                 .filter(game -> game.getName().equals(gameName))
-                .findFirst();
-        
-        if (existingGame.isPresent()) {
-            return existingGame.get();
-        } else {
-            // Create new game
-            Game game = new Game();
-            game.setName(gameName);
-            game.setDescription("暂无描述");
-            game.setCoverImage("/images/default-cover.jpg");
-            game.setDeveloper("未知");
-            game.setPublisher("未知");
-            game.setGenre("未知");
-            game.setReleaseDate(java.time.LocalDateTime.now());
-            return saveGame(game);
-        }
+                .findFirst()
+                .orElseGet(() -> {
+                    // Create new game
+                    Game game = new Game();
+                    game.setName(gameName);
+                    game.setDescription("暂无描述");
+                    game.setCoverImage("/images/default-cover.jpg");
+                    game.setDeveloper("未知");
+                    game.setPublisher("未知");
+                    game.setGenre("未知");
+                    game.setReleaseDate(java.time.LocalDateTime.now());
+                    return saveGame(game);
+                });
     }
     
     @Transactional

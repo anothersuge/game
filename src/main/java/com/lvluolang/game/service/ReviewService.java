@@ -106,24 +106,22 @@ public class ReviewService {
             return false;
         }
         
-        // Get the review
-        Optional<Review> reviewOpt = reviewRepository.findById(reviewId);
-        if (reviewOpt.isPresent()) {
-            Review review = reviewOpt.get();
-            int currentLikes = review.getLikes() != null ? review.getLikes() : 0;
-            review.setLikes(currentLikes + 1);
-            reviewRepository.save(review);
-            
-            // Record this like
-            ReviewLike reviewLike = new ReviewLike();
-            reviewLike.setReviewId(reviewId);
-            reviewLike.setIpAddress(clientIpAddress);
-            reviewLikeRepository.save(reviewLike);
-            
-            return true;
-        }
-        
-        return false;
+        // Get the review and update likes
+        return reviewRepository.findById(reviewId)
+                .map(review -> {
+                    int currentLikes = review.getLikes() != null ? review.getLikes() : 0;
+                    review.setLikes(currentLikes + 1);
+                    reviewRepository.save(review);
+                    
+                    // Record this like
+                    ReviewLike reviewLike = new ReviewLike();
+                    reviewLike.setReviewId(reviewId);
+                    reviewLike.setIpAddress(clientIpAddress);
+                    reviewLikeRepository.save(reviewLike);
+                    
+                    return true;
+                })
+                .orElse(false);
     }
     
 
