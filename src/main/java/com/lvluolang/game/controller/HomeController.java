@@ -36,35 +36,8 @@ public class HomeController {
         Double rating = ((Number) requestBody.get("rating")).doubleValue();
         String reviewContent = (String) requestBody.get("reviewContent");
         
-        // Check if game exists, if not create it
-        Optional<Game> existingGame = gameService.getAllGames().stream()
-                .filter(game -> game.getName().equals(gameName))
-                .findFirst();
-        
-        Game game;
-        if (existingGame.isPresent()) {
-            game = existingGame.get();
-        } else {
-            // Create new game
-            game = new Game();
-            game.setName(gameName);
-            game.setDescription("暂无描述");
-            game.setCoverImage("/images/default-cover.jpg");
-            game.setDeveloper("未知");
-            game.setPublisher("未知");
-            game.setGenre("未知");
-            game.setReleaseDate(java.time.LocalDateTime.now());
-            game = gameService.saveGame(game);
-        }
-        
-        // Create and save review
-        Review review = new Review();
-        review.setUsername(reviewerName);
-        review.setRating(rating);
-        review.setContent(reviewContent);
-        review.setGame(game);
-        
-        reviewService.saveReview(review);
+        // Create and save review using ReviewService
+        reviewService.createReview(gameName, reviewerName, rating, reviewContent, gameService);
         
         return "success";
     }

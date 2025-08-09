@@ -64,6 +64,29 @@ public class ReviewService {
         reviewRepository.deleteById(id);
     }
     
+    /**
+     * Create and save a review for a game
+     * @param gameName The name of the game
+     * @param reviewerName The name of the reviewer
+     * @param rating The rating given by the reviewer
+     * @param reviewContent The content of the review
+     * @param gameService The game service to get or create the game
+     * @return The saved review
+     */
+    public Review createReview(String gameName, String reviewerName, Double rating, String reviewContent, GameService gameService) {
+        // Get or create game using GameService
+        com.lvluolang.game.entity.Game game = gameService.getOrCreateGame(gameName);
+        
+        // Create and save review
+        Review review = new Review();
+        review.setUsername(reviewerName);
+        review.setRating(rating);
+        review.setContent(reviewContent);
+        review.setGame(game);
+        
+        return saveReview(review);
+    }
+    
     public List<Review> getTopRatedReviews() {
         return reviewRepository.findTop10ByOrderByLikesDesc();
     }
