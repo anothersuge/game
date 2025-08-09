@@ -17,8 +17,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     
     List<Review> findTop10ByOrderByLikesDesc();
     
-    List<Review> findTop10ByOrderByCreatedAtDesc();
-    
     List<Review> findTop100ByOrderByCreatedAtDesc();
     
     /**
