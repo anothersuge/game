@@ -24,4 +24,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     
     @Query("SELECT r FROM Review r WHERE r.game.id = :gameId ORDER BY r.likes DESC")
     List<Review> findPopularReviewsByGameId(@Param("gameId") Long gameId);
+    
+    /**
+     * Fetch reviews with game information using JOIN FETCH to avoid N+1 query problem
+     */
+    @Query("SELECT r FROM Review r JOIN FETCH r.game WHERE r.game.id = :gameId ORDER BY r.createdAt DESC")
+    List<Review> findRecentReviewsWithGameByGameId(@Param("gameId") Long gameId);
 }

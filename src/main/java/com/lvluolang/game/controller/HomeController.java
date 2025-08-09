@@ -97,16 +97,16 @@ public class HomeController {
         return "games";
     }
     
-    @GetMapping("/game")
-    public String gameDetail(@RequestParam Long id, Model model) {
+    @GetMapping("/game/{id}")
+    public String gameDetail(@PathVariable Long id, Model model) {
         return gameService.getGameById(id)
                 .map(game -> {
-                    List<Review> reviews = reviewService.getRecentReviewsByGameId(id);
+                    List<Review> reviews = reviewService.getRecentReviewsWithGameByGameId(id);
                     model.addAttribute("game", game);
                     model.addAttribute("reviews", reviews);
                     return "game-detail";
                 })
-                .orElse("redirect:/games");
+                .orElse("redirect:/");
     }
     
     @GetMapping("/search")

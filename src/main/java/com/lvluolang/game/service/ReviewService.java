@@ -41,6 +41,13 @@ public class ReviewService {
         return reviewRepository.findRecentReviewsByGameId(gameId);
     }
     
+    /**
+     * Get recent reviews with game information to avoid N+1 query problem
+     */
+    public List<Review> getRecentReviewsWithGameByGameId(Long gameId) {
+        return reviewRepository.findRecentReviewsWithGameByGameId(gameId);
+    }
+    
     public List<Review> getPopularReviewsByGameId(Long gameId) {
         return reviewRepository.findPopularReviewsByGameId(gameId);
     }
