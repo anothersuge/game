@@ -2,6 +2,10 @@ server:
   port: 8080
   address: 0.0.0.0
 
+dashscope:
+  api:
+    key: sk-49847dd4810540b0936f51c43e7ea4de
+
 spring:
   application:
     name: game

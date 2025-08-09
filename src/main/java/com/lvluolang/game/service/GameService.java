@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.CompletableFuture;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class GameService {
     
     private final GameRepository gameRepository;
+    private final AiService aiService;
     
     public List<Game> getAllGames() {
         return gameRepository.findAll();
@@ -64,14 +67,56 @@ public class GameService {
                     // Create new game
                     Game game = new Game();
                     game.setName(gameName);
+                    
+                    // Set default description initially
                     game.setDescription("暂无描述");
+                    
                     game.setCoverImage("/images/default-cover.jpg");
                     game.setDeveloper("未知");
                     game.setPublisher("未知");
                     game.setGenre("未知");
                     game.setReleaseDate(java.time.LocalDateTime.now());
-                    return saveGame(game);
+                    
+                    // Save the game first
+                    Game savedGame = saveGame(game);
+                    
+                    // Generate game description asynchronously
+                    generateGameDescriptionAsync(gameName, savedGame.getId());
+                    
+                    return savedGame;
                 });
+    }
+    
+    /**
+     * Asynchronously generate game description and update the game
+     * @param gameName The name of the game
+     * @param gameId The ID of the game to update
+     */
+    public void generateGameDescriptionAsync(String gameName, Long gameId) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                String description = aiService.generateGameDescription(gameName);
+                updateGameDescription(gameId, description);
+            } catch (Exception e) {
+                // Log the error, but don't change the default description
+                System.err.println("Failed to generate AI description for game: " + gameName + ", error: " + e.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Update game description
+     * @param gameId The ID of the game to update
+     * @param description The new description
+     */
+    @Transactional
+    public void updateGameDescription(Long gameId, String description) {
+        Optional<Game> gameOpt = gameRepository.findById(gameId);
+        if (gameOpt.isPresent()) {
+            Game game = gameOpt.get();
+            game.setDescription(description);
+            gameRepository.save(game);
+        }
     }
     
     @Transactional
