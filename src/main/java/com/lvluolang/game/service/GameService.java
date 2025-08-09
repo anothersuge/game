@@ -2,7 +2,7 @@ package com.lvluolang.game.service;
 
 import com.lvluolang.game.entity.Game;
 import com.lvluolang.game.repository.GameRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class GameService {
     
-    @Autowired
-    private GameRepository gameRepository;
+    private final GameRepository gameRepository;
     
     public List<Game> getAllGames() {
         return gameRepository.findAll();

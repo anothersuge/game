@@ -5,7 +5,7 @@ import com.lvluolang.game.annotation.SensitiveWordCheck;
 import com.lvluolang.game.entity.Review;
 import com.lvluolang.game.service.GameService;
 import com.lvluolang.game.service.ReviewService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
     
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
     
-    @Autowired
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
     
     
     
@@ -36,7 +35,7 @@ public class HomeController {
         String reviewContent = (String) requestBody.get("reviewContent");
         
         // Create and save review using ReviewService
-        reviewService.createReview(gameName, reviewerName, rating, reviewContent, gameService);
+        reviewService.createReview(gameName, reviewerName, rating, reviewContent);
         
         return "success";
     }

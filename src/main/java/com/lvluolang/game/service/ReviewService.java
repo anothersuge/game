@@ -1,10 +1,11 @@
 package com.lvluolang.game.service;
 
+import com.lvluolang.game.entity.Game;
 import com.lvluolang.game.entity.Review;
 import com.lvluolang.game.entity.ReviewLike;
 import com.lvluolang.game.repository.ReviewRepository;
 import com.lvluolang.game.repository.ReviewLikeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.lvluolang.game.util.ClientIpUtil;
@@ -12,16 +13,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ReviewService {
     
-    @Autowired
-    private ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository;
     
-    @Autowired
-    private ReviewLikeRepository reviewLikeRepository;
+    private final ReviewLikeRepository reviewLikeRepository;
     
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
     
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();
@@ -67,12 +66,11 @@ public class ReviewService {
      * @param reviewerName The name of the reviewer
      * @param rating The rating given by the reviewer
      * @param reviewContent The content of the review
-     * @param gameService The game service to get or create the game
      * @return The saved review
      */
-    public Review createReview(String gameName, String reviewerName, Double rating, String reviewContent, GameService gameService) {
+    public Review createReview(String gameName, String reviewerName, Double rating, String reviewContent) {
         // Get or create game using GameService
-        com.lvluolang.game.entity.Game game = gameService.getOrCreateGame(gameName);
+        Game game = gameService.getOrCreateGame(gameName);
         
         // Create and save review
         Review review = new Review();
