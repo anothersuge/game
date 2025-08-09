@@ -1,10 +1,10 @@
 package com.lvluolang.game.controller;
 
 import com.lvluolang.game.entity.Game;
+import com.lvluolang.game.annotation.SensitiveWordCheck;
 import com.lvluolang.game.entity.Review;
 import com.lvluolang.game.service.GameService;
 import com.lvluolang.game.service.ReviewService;
-import com.lvluolang.game.util.SensitiveWordFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,11 +23,11 @@ public class HomeController {
     @Autowired
     private ReviewService reviewService;
     
-    @Autowired
-    private SensitiveWordFilter sensitiveWordFilter;
+    
     
     @PostMapping("/submitReview")
     @ResponseBody
+    @SensitiveWordCheck
     public String submitReview(@RequestBody Map<String, Object> requestBody) {
         
         // Extract data from JSON request body
@@ -35,14 +35,6 @@ public class HomeController {
         String reviewerName = (String) requestBody.get("reviewerName");
         Double rating = ((Number) requestBody.get("rating")).doubleValue();
         String reviewContent = (String) requestBody.get("reviewContent");
-        
-        // Check for sensitive words
-        if (sensitiveWordFilter.containsSensitiveWord(gameName) || 
-            sensitiveWordFilter.containsSensitiveWord(reviewerName) || 
-            sensitiveWordFilter.containsSensitiveWord(reviewContent)) {
-            // Silently ignore submissions with sensitive words
-            return "success";
-        }
         
         // Check if game exists, if not create it
         Optional<Game> existingGame = gameService.getAllGames().stream()
