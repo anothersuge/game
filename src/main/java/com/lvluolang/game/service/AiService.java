@@ -30,7 +30,7 @@ public class AiService {
         // 构建消息
         Message userMessage = Message.builder()
                 .role(Role.USER.getValue())
-                .content("请联网搜索，为游戏" + gameName + "生成一段简短的游戏介绍，不超过150字。参考资料优先以steam，游民星空的游戏库ku.gamersky.com，百度百科描述为准，其次是其他网站的信息。如果发现这个游戏名是乱填的，就返回暂无介绍，不要瞎编")
+                .content("请联网搜索，为游戏" + gameName + "生成一段简短的游戏介绍，不超过150字。如果发现这个游戏名字是乱填的，不存在，就返回暂无介绍，不要瞎编。但是有新闻报道的即将发售的游戏可以写上新闻、测试资讯、预计发售日期等")
                 .build();
 
         // 构建请求
