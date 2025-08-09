@@ -225,7 +225,7 @@
                                     <span th:text="${review.likes}">0</span>
                                 </button>
                             </div>
-                            <div class="game-info" style="cursor: pointer;" onclick="window.location.href='/game?id=' + this.parentElement.parentElement.getAttribute('data-game-id')">
+                            <div class="game-info" style="cursor: pointer;" onclick="window.location.href='/game/' + this.parentElement.parentElement.getAttribute('data-game-id')">
                                 <h5 class="game-name" th:text="${review.game.name}">游戏名称</h5>
                                 <div class="rating mb-3">
                                     <input class="rating rating-loading" data-min="0" data-max="5" data-step="0.5" data-size="xs" data-show-clear="false" data-show-caption="false" th:value="${review.rating}" readonly>

@@ -101,7 +101,7 @@
                                 <small th:text="${#numbers.formatDecimal(game.averageRating, 1, 1)}">4.5</small>
                                 <small class="text-muted">(<span th:text="${game.ratingCount}">0</span>)</small>
                             </div>
-                            <a th:href="@{/game(id=${game.id})}" class="btn btn-sm btn-primary">查看详情</a>
+                            <a th:href="@{/game/{id}(id=${game.id})}" class="btn btn-sm btn-primary">查看详情</a>
                         </div>
                     </div>
                 </div>
