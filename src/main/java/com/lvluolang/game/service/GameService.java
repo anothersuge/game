@@ -4,6 +4,7 @@ import com.lvluolang.game.entity.Game;
 import com.lvluolang.game.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,7 @@ public class GameService {
         return gameRepository.findByDeveloper(developer);
     }
     
+    @Transactional
     public void updateGameRating(Long gameId, Double newRating) {
         Optional<Game> gameOpt = gameRepository.findById(gameId);
         if (gameOpt.isPresent()) {

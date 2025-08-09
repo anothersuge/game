@@ -6,6 +6,7 @@ import com.lvluolang.game.repository.ReviewRepository;
 import com.lvluolang.game.repository.ReviewLikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -52,6 +53,7 @@ public class ReviewService {
         return reviewRepository.findPopularReviewsByGameId(gameId);
     }
     
+    @Transactional
     public Review saveReview(Review review) {
         Review savedReview = reviewRepository.save(review);
         gameService.updateGameRating(review.getGame().getId(), review.getRating());
