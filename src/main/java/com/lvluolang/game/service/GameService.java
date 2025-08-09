@@ -55,6 +55,14 @@ public class GameService {
     }
     
     /**
+     * 获取描述为"暂无描述"或"暂无介绍"的游戏
+     * @return 描述为默认值的游戏列表
+     */
+    public List<Game> getGamesWithDefaultDescription() {
+        return gameRepository.findGamesWithDefaultDescription();
+    }
+    
+    /**
      * Get a game by name, or create a new one if it doesn't exist
      * @param gameName The name of the game
      * @return The existing or newly created game
@@ -111,19 +119,15 @@ public class GameService {
      */
     @Transactional
     public void updateGameDescription(Long gameId, String description) {
-        Optional<Game> gameOpt = gameRepository.findById(gameId);
-        if (gameOpt.isPresent()) {
-            Game game = gameOpt.get();
+        gameRepository.findById(gameId).ifPresent(game -> {
             game.setDescription(description);
             gameRepository.save(game);
-        }
+        });
     }
     
     @Transactional
     public void updateGameRating(Long gameId, Double newRating) {
-        Optional<Game> gameOpt = gameRepository.findById(gameId);
-        if (gameOpt.isPresent()) {
-            Game game = gameOpt.get();
+        gameRepository.findById(gameId).ifPresent(game -> {
             int currentCount = game.getRatingCount() != null ? game.getRatingCount() : 0;
             double currentAvg = game.getAverageRating() != null ? game.getAverageRating() : 0.0;
             
@@ -132,6 +136,6 @@ public class GameService {
             game.setRatingCount(currentCount + 1);
             
             gameRepository.save(game);
-        }
+        });
     }
 }

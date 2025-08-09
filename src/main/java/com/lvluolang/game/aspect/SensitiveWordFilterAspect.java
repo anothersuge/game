@@ -2,19 +2,19 @@ package com.lvluolang.game.aspect;
 
 import com.lvluolang.game.annotation.SensitiveWordCheck;
 import com.lvluolang.game.util.SensitiveWordFilter;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class SensitiveWordFilterAspect {
     
-    @Autowired
-    private SensitiveWordFilter sensitiveWordFilter;
+    private final SensitiveWordFilter sensitiveWordFilter;
     
     @Around("@annotation(sensitiveWordCheck)")
     public Object filterSensitiveWords(ProceedingJoinPoint joinPoint, SensitiveWordCheck sensitiveWordCheck) throws Throwable {
