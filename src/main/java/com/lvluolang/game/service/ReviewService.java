@@ -69,7 +69,7 @@ public class ReviewService {
     }
     
     public List<Review> getRecentReviews() {
-        return reviewRepository.findTop10ByOrderByCreatedAtDesc();
+        return reviewRepository.findTop100WithGameByOrderByCreatedAtDesc();
     }
     
     /**

@@ -19,6 +19,14 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     
     List<Review> findTop10ByOrderByCreatedAtDesc();
     
+    List<Review> findTop100ByOrderByCreatedAtDesc();
+    
+    /**
+     * Fetch top 100 reviews with game information using JOIN FETCH to avoid N+1 query problem
+     */
+    @Query("SELECT r FROM Review r JOIN FETCH r.game ORDER BY r.createdAt DESC")
+    List<Review> findTop100WithGameByOrderByCreatedAtDesc();
+    
     @Query("SELECT r FROM Review r WHERE r.game.id = :gameId ORDER BY r.createdAt DESC")
     List<Review> findRecentReviewsByGameId(@Param("gameId") Long gameId);
     
