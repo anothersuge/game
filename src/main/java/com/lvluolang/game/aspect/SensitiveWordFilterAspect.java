@@ -23,14 +23,13 @@ public class SensitiveWordFilterAspect {
         
         // 检查参数中是否包含敏感词
         for (Object arg : args) {
-            if (arg instanceof String && sensitiveWordFilter.containsSensitiveWord((String) arg)) {
+            if (arg instanceof String str && sensitiveWordFilter.containsSensitiveWord(str)) {
                 // 如果包含敏感词，直接返回"success"，不执行原方法
                 return "success";
-            } else if (arg instanceof Map) {
+            } else if (arg instanceof Map<?, ?> map) {
                 // 处理Map类型的参数
-                Map<?, ?> map = (Map<?, ?>) arg;
                 for (Object value : map.values()) {
-                    if (value instanceof String && sensitiveWordFilter.containsSensitiveWord((String) value)) {
+                    if (value instanceof String strValue && sensitiveWordFilter.containsSensitiveWord(strValue)) {
                         // 如果包含敏感词，直接返回"success"，不执行原方法
                         return "success";
                     }
