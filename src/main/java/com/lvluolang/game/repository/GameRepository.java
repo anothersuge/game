@@ -21,7 +21,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     List<Game> findByGenre(String genre);
     
     List<Game> findByDeveloper(String developer);
-    
-    @Query("SELECT g FROM Game g WHERE g.description = '暂无描述' OR g.description = '暂无介绍'")
+     
+    @Query("SELECT g FROM Game g WHERE g.description = '暂无描述'")
     List<Game> findGamesWithDefaultDescription();
 }

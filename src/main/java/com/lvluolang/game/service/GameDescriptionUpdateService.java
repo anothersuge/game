@@ -19,7 +19,7 @@ public class GameDescriptionUpdateService {
 
     /**
      * 每小时执行一次，检查并更新游戏描述
-     * 对于描述为"暂无描述"或"暂无介绍"的游戏，调用AI服务生成新的描述
+     * 对于描述为"暂无描述"的游戏，调用AI服务生成新的描述
      * 应用启动后延迟5分钟开始执行
      */
     @Scheduled(fixedRate = 3600000, initialDelay = 300000)
@@ -27,8 +27,8 @@ public class GameDescriptionUpdateService {
     public void updateGameDescriptions() {
         log.info("开始执行游戏描述更新任务");
         
-        // 获取描述为"暂无描述"或"暂无介绍"的游戏
-        List<Game> gamesWithDefaultDescription = gameService.getGamesWithDefaultDescription();
+        // 获取描述为"暂无描述"的游戏
+        List<Game> gamesWithDefaultDescription = gameService.getGamesDefaultDescription();
         
         // 为这些游戏生成并更新描述
         gamesWithDefaultDescription.forEach(this::generateAndUpdateGameDescription);

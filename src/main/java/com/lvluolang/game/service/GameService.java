@@ -54,11 +54,12 @@ public class GameService {
         return gameRepository.findByDeveloper(developer);
     }
     
+    
     /**
-     * 获取描述为"暂无描述"或"暂无介绍"的游戏
-     * @return 描述为默认值的游戏列表
+     * 获取描述为"暂无描述"的游戏
+     * @return 描述为"暂无描述"的游戏列表
      */
-    public List<Game> getGamesWithDefaultDescription() {
+    public List<Game> getGamesDefaultDescription() {
         return gameRepository.findGamesWithDefaultDescription();
     }
     
