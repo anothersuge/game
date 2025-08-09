@@ -23,6 +23,11 @@ public class HomeController {
     
     
     
+        /**
+     * 提交游戏评价
+     * @param requestBody 包含游戏评价信息的请求体
+     * @return 提交结果，成功返回"success"
+     */
     @PostMapping("/submitReview")
     @ResponseBody
     @SensitiveWordCheck
@@ -40,6 +45,11 @@ public class HomeController {
         return "success";
     }
     
+    /**
+     * 显示首页
+     * @param model 视图模型
+     * @return 首页视图名称
+     */
     @GetMapping("/")
     public String home(Model model) {
         List<Game> topRatedGames = gameService.getTopRatedGames();
@@ -53,6 +63,11 @@ public class HomeController {
         return "index";
     }
     
+    /**
+     * 显示所有游戏列表
+     * @param model 视图模型
+     * @return 游戏列表页视图名称
+     */
     @GetMapping("/games")
     public String games(Model model) {
         List<Game> allGames = gameService.getAllGames();
@@ -60,6 +75,12 @@ public class HomeController {
         return "games";
     }
     
+    /**
+     * 显示游戏详情
+     * @param id 游戏ID
+     * @param model 视图模型
+     * @return 游戏详情页视图名称，如果游戏不存在则重定向到首页
+     */
     @GetMapping("/game/{id}")
     public String gameDetail(@PathVariable Long id, Model model) {
         return gameService.getGameById(id)
@@ -72,6 +93,12 @@ public class HomeController {
                 .orElse("redirect:/");
     }
     
+    /**
+     * 搜索游戏
+     * @param keyword 搜索关键词
+     * @param model 视图模型
+     * @return 搜索结果页视图名称
+     */
     @GetMapping("/search")
     public String search(@RequestParam String keyword, Model model) {
         List<Game> searchResults = gameService.searchGames(keyword);
@@ -80,6 +107,11 @@ public class HomeController {
         return "search";
     }
     
+    /**
+     * 为评价点赞
+     * @param reviewId 评价ID
+     * @return 点赞结果，成功返回"success"，已点赞返回"already_liked"
+     */
     @PostMapping("/likeReview")
     @ResponseBody
     public String likeReview(@RequestParam Long reviewId) {

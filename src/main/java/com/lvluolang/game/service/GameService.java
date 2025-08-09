@@ -18,38 +18,79 @@ public class GameService {
     private final GameRepository gameRepository;
     private final AiService aiService;
     
+    /**
+     * 获取所有游戏
+     * @return 所有游戏列表
+     */
     public List<Game> getAllGames() {
         return gameRepository.findAll();
     }
     
+    /**
+     * 根据ID获取游戏
+     * @param id 游戏ID
+     * @return 游戏对象，如果不存在则返回空
+     */
     public Optional<Game> getGameById(Long id) {
         return gameRepository.findById(id);
     }
     
+    /**
+     * 保存游戏
+     * @param game 游戏对象
+     * @return 保存后的游戏对象
+     */
     public Game saveGame(Game game) {
         return gameRepository.save(game);
     }
     
+    /**
+     * 删除游戏
+     * @param id 游戏ID
+     */
     public void deleteGame(Long id) {
         gameRepository.deleteById(id);
     }
     
+    /**
+     * 获取评分最高的游戏
+     * @return 评分最高的游戏列表
+     */
     public List<Game> getTopRatedGames() {
         return gameRepository.findTop10ByOrderByAverageRatingDesc();
     }
     
+    /**
+     * 获取最近创建的游戏
+     * @return 最近创建的游戏列表
+     */
     public List<Game> getRecentGames() {
         return gameRepository.findTop10ByOrderByCreatedAtDesc();
     }
     
+    /**
+     * 搜索游戏
+     * @param keyword 搜索关键词
+     * @return 匹配的游戏列表
+     */
     public List<Game> searchGames(String keyword) {
         return gameRepository.searchGames(keyword);
     }
     
+    /**
+     * 根据游戏类型获取游戏
+     * @param genre 游戏类型
+     * @return 匹配的游戏列表
+     */
     public List<Game> getGamesByGenre(String genre) {
         return gameRepository.findByGenre(genre);
     }
     
+    /**
+     * 根据开发商获取游戏
+     * @param developer 开发商
+     * @return 匹配的游戏列表
+     */
     public List<Game> getGamesByDeveloper(String developer) {
         return gameRepository.findByDeveloper(developer);
     }
@@ -64,9 +105,9 @@ public class GameService {
     }
     
     /**
-     * Get a game by name, or create a new one if it doesn't exist
-     * @param gameName The name of the game
-     * @return The existing or newly created game
+     * 根据游戏名称获取游戏，如果不存在则创建新游戏
+     * @param gameName 游戏名称
+     * @return 已存在的或新创建的游戏
      */
     public Game getOrCreateGame(String gameName) {
         return getAllGames().stream()
@@ -97,9 +138,9 @@ public class GameService {
     }
     
     /**
-     * Asynchronously generate game description and update the game
-     * @param gameName The name of the game
-     * @param gameId The ID of the game to update
+     * 异步生成游戏描述并更新游戏
+     * @param gameName 游戏名称
+     * @param gameId 要更新的游戏ID
      */
     public void generateGameDescriptionAsync(String gameName, Long gameId) {
         CompletableFuture.runAsync(() -> {
@@ -114,9 +155,9 @@ public class GameService {
     }
     
     /**
-     * Update game description
-     * @param gameId The ID of the game to update
-     * @param description The new description
+     * 更新游戏描述
+     * @param gameId 要更新的游戏ID
+     * @param description 新的游戏描述
      */
     @Transactional
     public void updateGameDescription(Long gameId, String description) {
@@ -126,6 +167,11 @@ public class GameService {
         });
     }
     
+    /**
+     * 更新游戏评分
+     * @param gameId 游戏ID
+     * @param newRating 新评分
+     */
     @Transactional
     public void updateGameRating(Long gameId, Double newRating) {
         gameRepository.findById(gameId).ifPresent(game -> {

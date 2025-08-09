@@ -20,6 +20,14 @@ public class AiService {
     @Value("${dashscope.api.key}")
     private String apiKey;
 
+    /**
+     * 生成游戏描述
+     * @param gameName 游戏名称
+     * @return 生成的游戏描述
+     * @throws ApiException API异常
+     * @throws NoApiKeyException 缺少API密钥异常
+     * @throws InputRequiredException 输入参数异常
+     */
     public String generateGameDescription(String gameName) throws ApiException, NoApiKeyException, InputRequiredException {
         // 设置API密钥
         Constants.apiKey = apiKey;

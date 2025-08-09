@@ -22,33 +22,64 @@ public class ReviewService {
     
     private final GameService gameService;
     
+    /**
+     * 获取所有评论
+     * @return 所有评论列表
+     */
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();
     }
     
+    /**
+     * 根据ID获取评论
+     * @param id 评论ID
+     * @return 评论对象，如果不存在则返回空
+     */
     public Optional<Review> getReviewById(Long id) {
         return reviewRepository.findById(id);
     }
     
+    /**
+     * 根据游戏ID获取所有评论
+     * @param gameId 游戏ID
+     * @return 该游戏的所有评论
+     */
     public List<Review> getReviewsByGameId(Long gameId) {
         return reviewRepository.findByGameId(gameId);
     }
     
+    /**
+     * 获取指定游戏的最近评论
+     * @param gameId 游戏ID
+     * @return 指定游戏的最近评论列表
+     */
     public List<Review> getRecentReviewsByGameId(Long gameId) {
         return reviewRepository.findRecentReviewsByGameId(gameId);
     }
     
     /**
-     * Get recent reviews with game information to avoid N+1 query problem
+     * 获取指定游戏的最近评论及游戏信息，避免N+1查询问题
+     * @param gameId 游戏ID
+     * @return 包含游戏信息的最近评论列表
      */
     public List<Review> getRecentReviewsWithGameByGameId(Long gameId) {
         return reviewRepository.findRecentReviewsWithGameByGameId(gameId);
     }
     
+    /**
+     * 获取指定游戏的热门评论
+     * @param gameId 游戏ID
+     * @return 指定游戏的热门评论列表
+     */
     public List<Review> getPopularReviewsByGameId(Long gameId) {
         return reviewRepository.findPopularReviewsByGameId(gameId);
     }
     
+    /**
+     * 保存评论并更新游戏评分
+     * @param review 评论对象
+     * @return 保存后的评论对象
+     */
     @Transactional
     public Review saveReview(Review review) {
         Review savedReview = reviewRepository.save(review);
@@ -56,17 +87,21 @@ public class ReviewService {
         return savedReview;
     }
     
+    /**
+     * 删除评论
+     * @param id 评论ID
+     */
     public void deleteReview(Long id) {
         reviewRepository.deleteById(id);
     }
     
     /**
-     * Create and save a review for a game
-     * @param gameName The name of the game
-     * @param reviewerName The name of the reviewer
-     * @param rating The rating given by the reviewer
-     * @param reviewContent The content of the review
-     * @return The saved review
+     * 为游戏创建并保存评论
+     * @param gameName 游戏名称
+     * @param reviewerName 评论者名称
+     * @param rating 评分
+     * @param reviewContent 评论内容
+     * @return 保存后的评论
      */
     public Review createReview(String gameName, String reviewerName, Double rating, String reviewContent) {
         // Get or create game using GameService
@@ -82,17 +117,26 @@ public class ReviewService {
         return saveReview(review);
     }
     
+    /**
+     * 获取评分最高的评论
+     * @return 评分最高的评论列表
+     */
     public List<Review> getTopRatedReviews() {
         return reviewRepository.findTop10ByOrderByLikesDesc();
     }
     
+    /**
+     * 获取最近的评论
+     * @return 最近的评论列表
+     */
     public List<Review> getRecentReviews() {
         return reviewRepository.findTop100WithGameByOrderByCreatedAtDesc();
     }
     
     /**
-     * Like a review with IP address restriction
-     * Each IP address can only like a review once
+     * 点赞评论，使用IP地址限制，每个IP地址只能点赞一次
+     * @param reviewId 评论ID
+     * @return 是否点赞成功
      */
     public boolean likeReview(Long reviewId) {
         // Get client IP address

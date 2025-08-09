@@ -15,19 +15,34 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewLike {
     
+    /**
+     * 点赞ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    /**
+     * 关联的评价ID
+     */
     @Column(name = "review_id", nullable = false)
     private Long reviewId;
     
+    /**
+     * IP地址
+     */
     @Column(name = "ip_address", nullable = false)
     private String ipAddress;
     
+    /**
+     * 创建时间
+     */
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     
+    /**
+     * 实体创建前的预处理方法
+     */
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
