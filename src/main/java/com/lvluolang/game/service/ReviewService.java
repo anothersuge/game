@@ -7,6 +7,7 @@ import com.lvluolang.game.repository.ReviewLikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.lvluolang.game.util.ClientIpUtil;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -101,7 +102,7 @@ public class ReviewService {
      */
     public boolean likeReview(Long reviewId) {
         // Get client IP address
-        String clientIpAddress = getClientIpAddress();
+        String clientIpAddress = ClientIpUtil.getClientIpAddress();
         
         // Check if this IP has already liked this review
         Optional<ReviewLike> existingLike = reviewLikeRepository.findByReviewIdAndIpAddress(reviewId, clientIpAddress);
@@ -131,26 +132,5 @@ public class ReviewService {
         return false;
     }
     
-    /**
-     * Get client IP address from the request
-     */
-    private String getClientIpAddress() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes == null) {
-            return "unknown";
-        }
-        
-        HttpServletRequest request = attributes.getRequest();
-        String ipAddress = request.getHeader("X-Forwarded-For");
-        
-        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getHeader("X-Real-IP");
-        }
-        
-        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getRemoteAddr();
-        }
-        
-        return ipAddress;
-    }
+
 }
