@@ -3,6 +3,7 @@ package com.lvluolang.game.service;
 import com.lvluolang.game.entity.Game;
 import com.lvluolang.game.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GameService {
     
     private final GameRepository gameRepository;
@@ -41,7 +43,10 @@ public class GameService {
      * @return 保存后的游戏对象
      */
     public Game saveGame(Game game) {
-        return gameRepository.save(game);
+        log.info("正在保存游戏: {}", game.getName());
+        Game savedGame = gameRepository.save(game);
+        log.info("游戏保存成功，ID: {}", savedGame.getId());
+        return savedGame;
     }
     
     /**
@@ -49,7 +54,9 @@ public class GameService {
      * @param id 游戏ID
      */
     public void deleteGame(Long id) {
+        log.info("正在删除游戏，ID: {}", id);
         gameRepository.deleteById(id);
+        log.info("游戏删除成功，ID: {}", id);
     }
     
     /**
@@ -149,7 +156,7 @@ public class GameService {
                 updateGameDescription(gameId, description);
             } catch (Exception e) {
                 // Log the error, but don't change the default description
-                System.err.println("Failed to generate AI description for game: " + gameName + ", error: " + e.getMessage());
+                log.error("Failed to generate AI description for game: {}", gameName, e);
             }
         });
     }
@@ -161,9 +168,11 @@ public class GameService {
      */
     @Transactional
     public void updateGameDescription(Long gameId, String description) {
+        log.info("正在更新游戏描述，游戏ID: {}", gameId);
         gameRepository.findById(gameId).ifPresent(game -> {
             game.setDescription(description);
             gameRepository.save(game);
+            log.info("游戏描述更新成功，游戏ID: {}", gameId);
         });
     }
     
@@ -174,6 +183,7 @@ public class GameService {
      */
     @Transactional
     public void updateGameRating(Long gameId, Double newRating) {
+        log.info("正在更新游戏评分，游戏ID: {}, 新评分: {}", gameId, newRating);
         gameRepository.findById(gameId).ifPresent(game -> {
             int currentCount = game.getRatingCount() != null ? game.getRatingCount() : 0;
             double currentAvg = game.getAverageRating() != null ? game.getAverageRating() : 0.0;
@@ -183,6 +193,7 @@ public class GameService {
             game.setRatingCount(currentCount + 1);
             
             gameRepository.save(game);
+            log.info("游戏评分更新成功，游戏ID: {}, 新平均分: {}, 评价数量: {}", gameId, game.getAverageRating(), game.getRatingCount());
         });
     }
 }

@@ -6,6 +6,7 @@ import com.lvluolang.game.entity.ReviewLike;
 import com.lvluolang.game.repository.ReviewRepository;
 import com.lvluolang.game.repository.ReviewLikeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.lvluolang.game.util.ClientIpUtil;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
     
     private final ReviewRepository reviewRepository;
@@ -82,7 +84,9 @@ public class ReviewService {
      */
     @Transactional
     public Review saveReview(Review review) {
+        log.info("正在保存评论，游戏ID: {}, 评论者: {}", review.getGame().getId(), review.getUsername());
         Review savedReview = reviewRepository.save(review);
+        log.info("评论保存成功，ID: {}", savedReview.getId());
         gameService.updateGameRating(review.getGame().getId(), review.getRating());
         return savedReview;
     }
@@ -92,7 +96,9 @@ public class ReviewService {
      * @param id 评论ID
      */
     public void deleteReview(Long id) {
+        log.info("正在删除评论，ID: {}", id);
         reviewRepository.deleteById(id);
+        log.info("评论删除成功，ID: {}", id);
     }
     
     /**
@@ -141,12 +147,14 @@ public class ReviewService {
     public boolean likeReview(Long reviewId) {
         // Get client IP address
         String clientIpAddress = ClientIpUtil.getClientIpAddress();
+        log.info("正在处理评论点赞，评论ID: {}, IP地址: {}", reviewId, clientIpAddress);
         
         // Check if this IP has already liked this review
         Optional<ReviewLike> existingLike = reviewLikeRepository.findByReviewIdAndIpAddress(reviewId, clientIpAddress);
         
         // If already liked, return false
         if (existingLike.isPresent()) {
+            log.info("该IP地址已为评论点赞，评论ID: {}, IP地址: {}", reviewId, clientIpAddress);
             return false;
         }
         
@@ -163,6 +171,7 @@ public class ReviewService {
                     reviewLike.setIpAddress(clientIpAddress);
                     reviewLikeRepository.save(reviewLike);
                     
+                    log.info("评论点赞成功，评论ID: {}, 新点赞数: {}, IP地址: {}", reviewId, review.getLikes(), clientIpAddress);
                     return true;
                 })
                 .orElse(false);

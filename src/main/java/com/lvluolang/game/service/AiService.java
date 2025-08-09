@@ -9,12 +9,14 @@ import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
 @Service
+@Slf4j
 public class AiService {
 
     @Value("${dashscope.api.key}")
@@ -29,6 +31,8 @@ public class AiService {
      * @throws InputRequiredException 输入参数异常
      */
     public String generateGameDescription(String gameName) throws ApiException, NoApiKeyException, InputRequiredException {
+        log.info("开始为游戏 '{}' 生成描述", gameName);
+        
         // 设置API密钥
         Constants.apiKey = apiKey;
 
@@ -52,7 +56,10 @@ public class AiService {
         // 发送请求并获取结果
         GenerationResult result = gen.call(request);
         
+        String description = result.getOutput().getChoices().get(0).getMessage().getContent();
+        log.info("成功为游戏 '{}' 生成描述", gameName);
+        
         // 返回生成的文本
-        return result.getOutput().getChoices().get(0).getMessage().getContent();
+        return description;
     }
 }

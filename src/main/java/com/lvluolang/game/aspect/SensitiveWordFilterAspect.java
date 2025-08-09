@@ -3,6 +3,7 @@ package com.lvluolang.game.aspect;
 import com.lvluolang.game.annotation.SensitiveWordCheck;
 import com.lvluolang.game.util.SensitiveWordFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,6 +13,7 @@ import java.util.Map;
 @Aspect
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class SensitiveWordFilterAspect {
     
     private final SensitiveWordFilter sensitiveWordFilter;
@@ -25,18 +27,22 @@ public class SensitiveWordFilterAspect {
      */
     @Around("@annotation(sensitiveWordCheck)")
     public Object filterSensitiveWords(ProceedingJoinPoint joinPoint, SensitiveWordCheck sensitiveWordCheck) throws Throwable {
+        log.info("开始执行敏感词过滤，方法: {}", joinPoint.getSignature().toShortString());
+        
         // 获取方法参数
         Object[] args = joinPoint.getArgs();
         
         // 检查参数中是否包含敏感词
         for (Object arg : args) {
             if (arg instanceof String str && sensitiveWordFilter.containsSensitiveWord(str)) {
+                log.info("检测到敏感词，拦截请求");
                 // 如果包含敏感词，直接返回"success"，不执行原方法
                 return "success";
             } else if (arg instanceof Map<?, ?> map) {
                 // 处理Map类型的参数
                 for (Object value : map.values()) {
                     if (value instanceof String strValue && sensitiveWordFilter.containsSensitiveWord(strValue)) {
+                        log.info("检测到敏感词，拦截请求");
                         // 如果包含敏感词，直接返回"success"，不执行原方法
                         return "success";
                     }
@@ -44,6 +50,7 @@ public class SensitiveWordFilterAspect {
             }
         }
         
+        log.info("未检测到敏感词，继续执行原方法");
         // 如果不包含敏感词，继续执行原方法
         return joinPoint.proceed();
     }

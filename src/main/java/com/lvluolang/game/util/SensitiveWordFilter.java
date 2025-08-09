@@ -1,5 +1,6 @@
 package com.lvluolang.game.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -13,6 +14,7 @@ import java.util.Set;
  * 敏感词过滤器
  */
 @Component
+@Slf4j
 public class SensitiveWordFilter {
     
     private final Set<String> sensitiveWords = new HashSet<>();
@@ -43,7 +45,7 @@ public class SensitiveWordFilter {
                 reader.close();
             }
         } catch (IOException e) {
-            System.err.println("Failed to load sensitive words: " + e.getMessage());
+            log.error("Failed to load sensitive words", e);
         }
     }
     

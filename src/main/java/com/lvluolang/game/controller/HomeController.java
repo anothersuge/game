@@ -6,6 +6,7 @@ import com.lvluolang.game.entity.Review;
 import com.lvluolang.game.service.GameService;
 import com.lvluolang.game.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class HomeController {
     
     private final GameService gameService;
@@ -39,8 +41,12 @@ public class HomeController {
         Double rating = ((Number) requestBody.get("rating")).doubleValue();
         String reviewContent = (String) requestBody.get("reviewContent");
         
+        log.info("收到提交评价请求: 游戏={}, 评价者={}, 评分={}", gameName, reviewerName, rating);
+        
         // Create and save review using ReviewService
         reviewService.createReview(gameName, reviewerName, rating, reviewContent);
+        
+        log.info("评价提交成功: 游戏={}, 评价者={}, 评分={}", gameName, reviewerName, rating);
         
         return "success";
     }
@@ -52,6 +58,8 @@ public class HomeController {
      */
     @GetMapping("/")
     public String home(Model model) {
+        log.info("访问首页");
+        
         List<Game> topRatedGames = gameService.getTopRatedGames();
         List<Game> recentGames = gameService.getRecentGames();
         List<Review> recentReviews = reviewService.getRecentReviews();
@@ -70,6 +78,8 @@ public class HomeController {
      */
     @GetMapping("/games")
     public String games(Model model) {
+        log.info("访问游戏列表页");
+        
         List<Game> allGames = gameService.getAllGames();
         model.addAttribute("games", allGames);
         return "games";
@@ -83,11 +93,15 @@ public class HomeController {
      */
     @GetMapping("/game/{id}")
     public String gameDetail(@PathVariable Long id, Model model) {
+        log.info("访问游戏详情页，游戏ID: {}", id);
+        
         return gameService.getGameById(id)
                 .map(game -> {
                     List<Review> reviews = reviewService.getRecentReviewsWithGameByGameId(id);
                     model.addAttribute("game", game);
                     model.addAttribute("reviews", reviews);
+                    
+                    log.info("成功加载游戏详情，游戏ID: {}", id);
                     return "game-detail";
                 })
                 .orElse("redirect:/");
@@ -101,9 +115,13 @@ public class HomeController {
      */
     @GetMapping("/search")
     public String search(@RequestParam String keyword, Model model) {
+        log.info("执行游戏搜索，关键词: {}", keyword);
+        
         List<Game> searchResults = gameService.searchGames(keyword);
         model.addAttribute("games", searchResults);
         model.addAttribute("keyword", keyword);
+        
+        log.info("搜索完成，找到 {} 个结果", searchResults.size());
         return "search";
     }
     
@@ -115,7 +133,16 @@ public class HomeController {
     @PostMapping("/likeReview")
     @ResponseBody
     public String likeReview(@RequestParam Long reviewId) {
+        log.info("收到点赞请求，评价ID: {}", reviewId);
+        
         boolean success = reviewService.likeReview(reviewId);
+        
+        if (success) {
+            log.info("点赞成功，评价ID: {}", reviewId);
+        } else {
+            log.info("点赞失败，评价已点赞，评价ID: {}", reviewId);
+        }
+        
         return success ? "success" : "already_liked";
     }
 }

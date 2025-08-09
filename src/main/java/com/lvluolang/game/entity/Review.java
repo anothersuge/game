@@ -63,5 +63,10 @@ public class Review {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.likes = 0;
+        
+        // 日志记录实体创建
+        if (this.username != null && this.game != null && this.game.getName() != null) {
+            System.out.println("正在创建评价实体: 用户=" + this.username + ", 游戏=" + this.game.getName());
+        }
     }
 }

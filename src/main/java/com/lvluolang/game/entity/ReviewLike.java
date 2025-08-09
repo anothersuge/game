@@ -46,5 +46,8 @@ public class ReviewLike {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        
+        // 日志记录实体创建
+        System.out.println("正在创建点赞实体: 评价ID=" + this.reviewId + ", IP=" + this.ipAddress);
     }
 }

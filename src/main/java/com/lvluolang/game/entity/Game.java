@@ -93,5 +93,10 @@ public class Game {
         this.createdAt = LocalDateTime.now();
         this.averageRating = 0.0;
         this.ratingCount = 0;
+        
+        // 日志记录实体创建
+        if (this.name != null) {
+            System.out.println("正在创建游戏实体: " + this.name);
+        }
     }
 }
