@@ -1,6 +1,8 @@
-package com.lvluolang.game.service;
+package com.lvluolang.game.scheduled;
 
 import com.lvluolang.game.entity.Game;
+import com.lvluolang.game.service.AiService;
+import com.lvluolang.game.service.GameService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
