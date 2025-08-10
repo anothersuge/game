@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lvluolang.game.util.ClientIpUtil;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +84,7 @@ public class ReviewService {
      * @param review 评论对象
      * @return 保存后的评论对象
      */
+    @CacheEvict(value = "recentReviews", allEntries = true)
     @Transactional
     public Review saveReview(Review review) {
         log.info("正在保存评论，游戏ID: {}, 评论者: {}", review.getGame().getId(), review.getUsername());
@@ -95,6 +98,7 @@ public class ReviewService {
      * 删除评论
      * @param id 评论ID
      */
+    @CacheEvict(value = "recentReviews", allEntries = true)
     public void deleteReview(Long id) {
         log.info("正在删除评论，ID: {}", id);
         reviewRepository.deleteById(id);
@@ -135,6 +139,7 @@ public class ReviewService {
      * 获取最近的评论
      * @return 最近的评论列表
      */
+    @Cacheable("recentReviews")
     public List<Review> getRecentReviews() {
         return reviewRepository.findTop100WithGameByOrderByCreatedAtDesc();
     }
@@ -144,6 +149,7 @@ public class ReviewService {
      * @param reviewId 评论ID
      * @return 是否点赞成功
      */
+    @CacheEvict(value = "recentReviews", allEntries = true)
     public boolean likeReview(Long reviewId) {
         // Get client IP address
         String clientIpAddress = ClientIpUtil.getClientIpAddress();

@@ -23,9 +23,7 @@ public class HomeController {
     
     private final ReviewService reviewService;
     
-    
-    
-        /**
+    /**
      * 提交游戏评价
      * @param requestBody 包含游戏评价信息的请求体
      * @return 提交结果，成功返回"success"
@@ -40,8 +38,6 @@ public class HomeController {
         String reviewerName = (String) requestBody.get("reviewerName");
         Double rating = ((Number) requestBody.get("rating")).doubleValue();
         String reviewContent = (String) requestBody.get("reviewContent");
-        
-        log.info("收到提交评价请求: 游戏={}, 评价者={}, 评分={}", gameName, reviewerName, rating);
         
         // Create and save review using ReviewService
         reviewService.createReview(gameName, reviewerName, rating, reviewContent);
@@ -58,7 +54,6 @@ public class HomeController {
      */
     @GetMapping("/")
     public String home(Model model) {
-        log.info("访问首页");
         
         List<Game> topRatedGames = gameService.getTopRatedGames();
         List<Game> recentGames = gameService.getRecentGames();
@@ -78,7 +73,6 @@ public class HomeController {
      */
     @GetMapping("/games")
     public String games(Model model) {
-        log.info("访问游戏列表页");
         
         List<Game> allGames = gameService.getAllGames();
         model.addAttribute("games", allGames);
@@ -93,7 +87,6 @@ public class HomeController {
      */
     @GetMapping("/game/{id}")
     public String gameDetail(@PathVariable Long id, Model model) {
-        log.info("访问游戏详情页，游戏ID: {}", id);
         
         return gameService.getGameById(id)
                 .map(game -> {
@@ -101,7 +94,6 @@ public class HomeController {
                     model.addAttribute("game", game);
                     model.addAttribute("reviews", reviews);
                     
-                    log.info("成功加载游戏详情，游戏ID: {}", id);
                     return "game-detail";
                 })
                 .orElse("redirect:/");
@@ -115,13 +107,11 @@ public class HomeController {
      */
     @GetMapping("/search")
     public String search(@RequestParam String keyword, Model model) {
-        log.info("执行游戏搜索，关键词: {}", keyword);
         
         List<Game> searchResults = gameService.searchGames(keyword);
         model.addAttribute("games", searchResults);
         model.addAttribute("keyword", keyword);
-        
-        log.info("搜索完成，找到 {} 个结果", searchResults.size());
+    
         return "search";
     }
     
@@ -133,10 +123,7 @@ public class HomeController {
     @PostMapping("/likeReview")
     @ResponseBody
     public String likeReview(@RequestParam Long reviewId) {
-        log.info("收到点赞请求，评价ID: {}", reviewId);
-        
         boolean success = reviewService.likeReview(reviewId);
-        
         if (success) {
             log.info("点赞成功，评价ID: {}", reviewId);
         } else {

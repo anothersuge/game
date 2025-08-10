@@ -34,8 +34,6 @@
 数据库：sqlite
 模板引擎：Thymeleaf（前后端不分离）
 缓存：Redis（用于排行榜、热门游戏等）
-日志：Logback + Spring Actuator
-部署：Docker + Nginx（可选）
 
 Nginx 配置：
 为了在生产环境中使用 80 端口访问应用，同时避免以 root 权限运行应用，可以使用 Nginx 作为反向代理。
