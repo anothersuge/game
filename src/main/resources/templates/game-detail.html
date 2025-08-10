@@ -11,17 +11,8 @@
     <!-- Bootstrap Star Rating Theme -->
     <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-star-rating@4.1.2/themes/krajee-svg/theme.css" media="all" rel="stylesheet" type="text/css" />
     <style>
-        .game-cover {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
         .rating {
             color: #ffc107;
-        }
-        .game-info-box {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
         }
         
         /* Star rating styles */
@@ -155,10 +146,7 @@
     <div class="container mt-4">
         <!-- Game Header -->
         <div class="row mb-4">
-            <div class="col-md-4">
-                <img th:src="${game.coverImage}" class="img-fluid game-cover" alt="Game Cover">
-            </div>
-            <div class="col-md-8">
+            <div class="col-12">
                 <h1 th:text="${game.name}">游戏名称</h1>
                 <div class="rating mb-3">
                     <span th:each="i : ${#numbers.sequence(1, 5)}">
@@ -168,27 +156,10 @@
                     <span class="ms-2" th:text="${#numbers.formatDecimal(game.averageRating, 1, 1)} + ' (' + ${game.ratingCount} + ' 评价)'">4.5 (100 评价)</span>
                 </div>
                 
-                <div class="game-info-box mb-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>类型:</strong> <span th:text="${game.genre}">类型</span></p>
-                            <p><strong>开发商:</strong> <span th:text="${game.developer}">开发商</span></p>
-                            <p><strong>发行商:</strong> <span th:text="${game.publisher}">发行商</span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>发布日期:</strong> <span th:text="${#temporals.format(game.releaseDate, 'yyyy-MM-dd')}">2024-01-01</span></p>
-                            <p><strong>评价数量:</strong> <span th:text="${game.ratingCount}">0</span></p>
-                            <p><strong>平均评分:</strong> <span th:text="${#numbers.formatDecimal(game.averageRating, 1, 1)}">0.0</span></p>
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="mb-3">
                     <h4>游戏介绍</h4>
                     <p th:text="${game.description != null ? game.description : '暂无介绍'}">游戏介绍内容</p>
                 </div>
-                
-
             </div>
         </div>
 
