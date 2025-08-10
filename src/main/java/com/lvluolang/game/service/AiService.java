@@ -22,6 +22,12 @@ public class AiService {
     @Value("${dashscope.api.key}")
     private String apiKey;
 
+    @Value("${dashscope.model.name:qwen-plus}")
+    private String modelName;
+
+    @Value("${dashscope.prompt.template:请联网搜索,为游戏{gameName}生成一段简短的游戏介绍,不超过150字.如果发现这个游戏名字是乱填的不存在,就返回无介绍,不要瞎编。但是有新闻报道的即将发售的游戏可以写上新闻、测试资讯、预计发售日期等}")
+    private String promptTemplate;
+
     /**
      * 生成游戏描述
      * @param gameName 游戏名称
@@ -40,14 +46,15 @@ public class AiService {
         Generation gen = new Generation();
 
         // 构建消息
+        String content = promptTemplate.replace("{gameName}", gameName);
         Message userMessage = Message.builder()
                 .role(Role.USER.getValue())
-                .content("请联网搜索,为游戏" + gameName + "生成一段简短的游戏介绍,不超过150字.如果发现这个游戏名字是乱填的不存在,就返回无介绍,不要瞎编。但是有新闻报道的即将发售的游戏可以写上新闻、测试资讯、预计发售日期等")
+                .content(content)
                 .build();
 
         // 构建请求
         GenerationParam request = GenerationParam.builder()
-                .model("qwen-plus")
+                .model(modelName)
                 .messages(Arrays.asList(userMessage))
                 .resultFormat(GenerationParam.ResultFormat.MESSAGE)
                 .enableSearch(true)

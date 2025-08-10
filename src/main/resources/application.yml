@@ -5,6 +5,10 @@ server:
 dashscope:
   api:
     key: sk-49847dd4810540b0936f51c43e7ea4de
+  model:
+    name: qwen-plus
+  prompt:
+    template: 请联网搜索,为游戏{gameName}生成一段简短的游戏介绍,不超过150字.如果发现这个游戏名字是乱填的不存在,就返回无介绍,不要瞎编。但是有新闻报道的即将发售的游戏可以写上新闻、测试资讯、预计发售日期等
 
 spring:
   application:

@@ -94,6 +94,23 @@ dashscope:
 
 3. 将`your-api-key-here`替换为您从阿里云获取的实际API密钥
 
+## DashScope AI服务配置
+
+除了API密钥，您还可以配置AI模型和提示词模板：
+
+```yaml
+dashscope:
+  api:
+    key: your-api-key-here
+  model:
+    name: qwen-plus
+  prompt:
+    template: 请联网搜索,为游戏{gameName}生成一段简短的游戏介绍,不超过150字.如果发现这个游戏名字是乱填的不存在,就返回无介绍,不要瞎编。但是有新闻报道的即将发售的游戏可以写上新闻、测试资讯、预计发售日期等
+```
+
+- `dashscope.model.name`：指定使用的AI模型，默认为`qwen-plus`
+- `dashscope.prompt.template`：自定义提示词模板，其中`{gameName}`会被替换为实际的游戏名称
+
 ## AI生成描述的异步处理
 
 为了提升用户体验，游戏描述的AI生成过程是异步进行的：
