@@ -11,6 +11,16 @@
     <!-- Bootstrap Star Rating Theme -->
     <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-star-rating@4.1.2/themes/krajee-svg/theme.css" media="all" rel="stylesheet" type="text/css" />
     <style>
+        .game-card {
+            transition: transform 0.2s;
+            height: 100%;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+        .rating {
+            color: #ffc107;
+        }
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -26,7 +36,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: box-shadow 0.3s ease;
             margin-bottom: 20px;
-            break-inside: avoid; /* Prevent cards from being split across columns */
         }
         .review-card:hover {
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
@@ -138,32 +147,6 @@
             font-family: "Font Awesome 5 Free";
             font-weight: 900;
         }
-        
-        /* Masonry grid styles */
-        .masonry-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            grid-gap: 20px;
-            align-items: start;
-        }
-        
-        @media (max-width: 768px) {
-            .masonry-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .masonry-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (min-width: 1025px) {
-            .masonry-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
     </style>
 </head>
 <body>
@@ -225,31 +208,32 @@
             <h2 class="section-title">
                 <i class="fas fa-comments"></i> 最新评价
             </h2>
-            <!-- Masonry Grid for Review Cards -->
-            <div class="masonry-grid">
-                <div class="review-card" th:each="review : ${recentReviews}" th:attr="data-game-id=${review.game.id},data-review-id=${review.id}">
-                    <div class="card-body">
-                        <div class="user-info-container">
-                            <div class="user-info">
-                                <div class="avatar" th:text="${#strings.substring(review.username, 0, 1)}">U</div>
-                                <div>
-                                    <h6 class="user-name" th:text="${review.username}">用户名</h6>
-                                    <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">时间</small>
+            <div class="row">
+                <div class="col-md-4 col-sm-6 mb-4" th:each="review : ${recentReviews}">
+                    <div class="review-card" th:attr="data-game-id=${review.game.id},data-review-id=${review.id}">
+                        <div class="card-body">
+                            <div class="user-info-container">
+                                <div class="user-info">
+                                    <div class="avatar" th:text="${#strings.substring(review.username, 0, 1)}">U</div>
+                                    <div>
+                                        <h6 class="user-name" th:text="${review.username}">用户名</h6>
+                                        <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">时间</small>
+                                    </div>
                                 </div>
+                                <button class="action-button">
+                                    <i class="fas fa-heart"></i>
+                                    <span th:text="${review.likes}">0</span>
+                                </button>
                             </div>
-                            <button class="action-button">
-                                <i class="fas fa-heart"></i>
-                                <span th:text="${review.likes}">0</span>
-                            </button>
-                        </div>
-                        <div class="game-info" style="cursor: pointer;" onclick="window.location.href='/game/' + this.parentElement.parentElement.getAttribute('data-game-id')">
-                            <h5 class="game-name" th:text="${review.game.name}">游戏名称</h5>
-                            <div class="rating mb-3">
-                                <input class="rating rating-loading" data-min="0" data-max="5" data-step="0.5" data-size="xs" data-show-clear="false" data-show-caption="false" th:value="${review.rating}" readonly>
+                            <div class="game-info" style="cursor: pointer;" onclick="window.location.href='/game/' + this.parentElement.parentElement.getAttribute('data-game-id')">
+                                <h5 class="game-name" th:text="${review.game.name}">游戏名称</h5>
+                                <div class="rating mb-3">
+                                    <input class="rating rating-loading" data-min="0" data-max="5" data-step="0.5" data-size="xs" data-show-clear="false" data-show-caption="false" th:value="${review.rating}" readonly>
+                                </div>
+                                <p class="review-content" th:text="${review.content}">评价内容</p>
                             </div>
-                            <p class="review-content" th:text="${review.content}">评价内容</p>
+                            
                         </div>
-                        
                     </div>
                 </div>
             </div>
