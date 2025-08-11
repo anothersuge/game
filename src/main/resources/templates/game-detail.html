@@ -149,11 +149,8 @@
             <div class="col-12">
                 <h1 th:text="${game.name}">游戏名称</h1>
                 <div class="rating mb-3">
-                    <span th:each="i : ${#numbers.sequence(1, 5)}">
-                        <i class="fas fa-star" th:if="${i <= game.averageRating}"></i>
-                        <i class="far fa-star" th:if="${i > game.averageRating}"></i>
-                    </span>
-                    <span class="ms-2" th:text="${#numbers.formatDecimal(game.averageRating, 1, 1)} + ' (' + ${game.ratingCount} + ' 评价)'">4.5 (100 评价)</span>
+                    <input class="rating rating-loading game-detail-rating" data-min="0" data-max="5" data-step="0.5" data-size="xs" data-show-clear="false" data-show-caption="false" th:value="${game.averageRating}" readonly>
+                    <span class="ms-2" th:text="${game.averageRating + ' (' + game.ratingCount + ' 评价)'}">0.0 (100 评价)</span>
                 </div>
                 
                 <div class="mb-3">
@@ -304,6 +301,17 @@
             
             // Initialize read-only rating inputs in review cards
             $('.review-card .rating input').rating({
+                theme: 'krajee-svg',
+                filledStar: '<span class="krajee-icon krajee-icon-star"></span>',
+                emptyStar: '<span class="krajee-icon krajee-icon-star"></span>',
+                containerClass: 'is-star',
+                showClear: false,
+                showCaption: false,
+                readonly: true
+            });
+            
+            // Initialize the game detail rating display
+            $('.game-detail-rating').rating({
                 theme: 'krajee-svg',
                 filledStar: '<span class="krajee-icon krajee-icon-star"></span>',
                 emptyStar: '<span class="krajee-icon krajee-icon-star"></span>',

@@ -74,7 +74,7 @@ public class HomeController {
     @GetMapping("/games")
     public String games(Model model) {
         
-        List<Game> allGames = gameService.getAllGames();
+        List<Game> allGames = gameService.getAllGamesOrderByCreatedAtDesc();
         model.addAttribute("games", allGames);
         return "games";
     }

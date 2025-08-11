@@ -24,6 +24,12 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     List<Game> findTop10ByOrderByCreatedAtDesc();
     
     /**
+     * 获取所有游戏，按创建时间倒序排列
+     * @return 所有游戏列表，按创建时间倒序排列
+     */
+    List<Game> findAllByOrderByCreatedAtDesc();
+    
+    /**
      * 根据关键词搜索游戏
      * @param keyword 搜索关键词
      * @return 匹配的游戏列表

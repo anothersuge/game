@@ -29,6 +29,14 @@ public class GameService {
     }
     
     /**
+     * 获取所有游戏，按创建时间倒序排列
+     * @return 所有游戏列表，按创建时间倒序排列
+     */
+    public List<Game> getAllGamesOrderByCreatedAtDesc() {
+        return gameRepository.findAllByOrderByCreatedAtDesc();
+    }
+    
+    /**
      * 根据ID获取游戏
      * @param id 游戏ID
      * @return 游戏对象，如果不存在则返回空
