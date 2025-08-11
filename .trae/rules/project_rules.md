@@ -1,5 +1,5 @@
 1.新增、大幅修改功能后，可以考虑更新下readme
-2.完成修改后尝试停止然后重启项目，但不要预览网页
+2.不要预览网页
 3. 后端架构：Spring Boot 3 + Java 21+lombok+Spring Data JPA
 - 数据库：SQLite
 - 模板引擎：Thymeleaf（前后端不分离）

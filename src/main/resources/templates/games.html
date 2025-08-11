@@ -31,15 +31,15 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <i class="fas fa-gamepad"></i> 绿萝狼锐评
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link active" href="/games">游戏库</a>
-                <a class="nav-link" href="#">排行榜</a>
-                <a class="nav-link" href="#">关于</a>
+                <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#addReviewModal">
+                    <i class="fas fa-plus"></i> 添加评价
+                </button>
             </div>
         </div>
     </nav>
@@ -56,27 +56,13 @@
         <!-- Search and Filter -->
         <div class="filter-section">
             <div class="row">
-                <div class="col-md-6">
-                    <form class="d-flex" action="/search" method="get">
-                        <input class="form-control me-2" type="search" name="keyword" placeholder="搜索游戏...">
-                        <button class="btn btn-primary" type="submit">搜索</button>
-                    </form>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex justify-content-end">
-                        <select class="form-select me-2" style="width: auto;">
-                            <option>全部分类</option>
-                            <option>动作</option>
-                            <option>冒险</option>
-                            <option>角色扮演</option>
-                            <option>策略</option>
-                            <option>体育</option>
-                        </select>
-                        <select class="form-select" style="width: auto;">
-                            <option>默认排序</option>
-                            <option>评分最高</option>
-                            <option>最新发布</option>
-                            <option>评价最多</option>
+                <div class="col-12">
+                    <div class="d-flex justify-content-start">
+                        <input class="form-control me-2" type="search" id="frontend-search" placeholder="查询..." style="width: auto;">
+                        <select class="form-select" id="sort-order" style="width: auto;">
+                            <option value="default">默认排序</option>
+                            <option value="rating">评分最高</option>
+                            <option value="reviews">评价最多</option>
                         </select>
                     </div>
                 </div>
@@ -108,6 +94,42 @@
         </div>
     </div>
 
+    <!-- Add Review Modal -->
+    <div class="modal fade" id="addReviewModal" tabindex="-1" aria-labelledby="addReviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addReviewModalLabel">添加游戏评价</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addReviewForm">
+                        <div class="mb-3">
+                            <label for="gameName" class="form-label">游戏名称</label>
+                            <input type="text" class="form-control" id="gameName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reviewerName" class="form-label">评价人</label>
+                            <input type="text" class="form-control" id="reviewerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">评分</label>
+                            <input id="rating" name="rating" class="rating rating-loading" data-min="0" data-max="5" data-step="0.5" data-size="sm" data-show-clear="false" data-show-caption="false">
+                        </div>
+                        <div class="mb-3">
+                            <label for="reviewContent" class="form-label">评论内容</label>
+                            <textarea class="form-control" id="reviewContent" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="submitReview">提交评价</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container text-center">
@@ -125,6 +147,16 @@
     <script>
         // Initialize star rating plugin
         $(document).ready(function() {
+            // Initialize the main rating input
+            $('#rating').rating({
+                theme: 'krajee-svg',
+                filledStar: '<span class="krajee-icon krajee-icon-star"></span>',
+                emptyStar: '<span class="krajee-icon krajee-icon-star"></span>',
+                containerClass: 'is-star',
+                showClear: false,
+                showCaption: false
+            });
+            
             // Initialize read-only rating inputs in game cards
             $('.game-card .rating input').rating({
                 theme: 'krajee-svg',
@@ -134,6 +166,122 @@
                 showClear: false,
                 showCaption: false,
                 readonly: true
+            });
+            
+            // Store original game data with additional properties for sorting
+            var allGames = [];
+            $('.col-md-3.mb-4').each(function() {
+                var gameName = $(this).find('.card-title').text().trim();
+                var gameRating = parseFloat($(this).find('input.rating').val());
+                var reviewCountText = $(this).find('span').text();
+                var reviewCount = 0;
+                
+                // Extract review count from text like "4.5 (123 评价)"
+                var match = reviewCountText.match(/\((\d+) 评价\)/);
+                if (match) {
+                    reviewCount = parseInt(match[1]);
+                }
+                
+                allGames.push({
+                    element: this,
+                    name: gameName.toLowerCase(),
+                    originalName: gameName,
+                    rating: gameRating,
+                    reviews: reviewCount
+                });
+            });
+            
+            // Frontend search functionality
+            $('#frontend-search').on('input', function() {
+                applyFilters();
+            });
+            
+            // Sort order functionality
+            $('#sort-order').on('change', function() {
+                applyFilters();
+            });
+            
+            // Apply all filters (search and sort)
+            function applyFilters() {
+                var searchTerm = $('#frontend-search').val().toLowerCase();
+                var sortOrder = $('#sort-order').val();
+                
+                // Filter games
+                var filteredGames = allGames.filter(function(game) {
+                    // Search filter
+                    var matchesSearch = searchTerm === '' || game.name.includes(searchTerm);
+                    
+                    return matchesSearch;
+                });
+                
+                // Sort games
+                filteredGames.sort(function(a, b) {
+                    if (sortOrder === 'rating') {
+                        return b.rating - a.rating;
+                    } else if (sortOrder === 'reviews') {
+                        return b.reviews - a.reviews;
+                    }
+                    // Default order (original order)
+                    return allGames.indexOf(a) - allGames.indexOf(b);
+                });
+                
+                // Hide all games first
+                $('.col-md-3.mb-4').hide();
+                
+                // Show filtered and sorted games
+                filteredGames.forEach(function(game) {
+                    $(game.element).show();
+                });
+            }
+        });
+
+        // Handle review submission
+        document.getElementById('submitReview').addEventListener('click', function() {
+            // Get form values
+            const gameName = document.getElementById('gameName').value;
+            const reviewerName = document.getElementById('reviewerName').value;
+            // Get rating value from the star rating plugin
+            const rating = $('#rating').val();
+            const reviewContent = document.getElementById('reviewContent').value;
+            
+            // Simple validation
+            if (!gameName || !reviewerName || !rating || !reviewContent) {
+                alert('请填写所有必填字段');
+                return;
+            }
+            
+            // Send data to server using fetch API
+            fetch('/submitReview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    gameName: gameName,
+                    reviewerName: reviewerName,
+                    rating: parseFloat(rating),
+                    reviewContent: reviewContent
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'success') {
+                    // Close the modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addReviewModal'));
+                    modal.hide();
+                    // Reset form
+                    document.getElementById('addReviewForm').reset();
+                    // Reset star rating
+                    $('#rating').rating('reset');
+                    // Refresh page
+                    location.reload();
+                } else {
+                    alert('提交失败，请重试。');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('提交失败，请重试。');
             });
         });
     </script>
