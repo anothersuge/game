@@ -8,7 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "games")
+@Table(name = "games", indexes = {
+    @Index(name = "idx_game_created_at", columnList = "createdAt DESC"),
+    @Index(name = "idx_game_name", columnList = "name")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

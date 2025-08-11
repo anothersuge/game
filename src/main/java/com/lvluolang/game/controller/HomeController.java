@@ -74,8 +74,8 @@ public class HomeController {
     @GetMapping("/games")
     public String games(Model model) {
         
-        List<Game> allGames = gameService.getAllGamesOrderByCreatedAtDesc();
-        model.addAttribute("games", allGames);
+        List<Game> recentGames = gameService.getRecent100Games();
+        model.addAttribute("games", recentGames);
         return "games";
     }
     

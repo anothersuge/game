@@ -4,6 +4,8 @@ import com.lvluolang.game.entity.Game;
 import com.lvluolang.game.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,7 @@ public class GameService {
      * @param game 游戏对象
      * @return 保存后的游戏对象
      */
+    @CacheEvict(value = "recentGames", allEntries = true)
     public Game saveGame(Game game) {
         log.info("正在保存游戏: {}", game.getName());
         Game savedGame = gameRepository.save(game);
@@ -61,6 +64,7 @@ public class GameService {
      * 删除游戏
      * @param id 游戏ID
      */
+    @CacheEvict(value = "recentGames", allEntries = true)
     public void deleteGame(Long id) {
         log.info("正在删除游戏，ID: {}", id);
         gameRepository.deleteById(id);
@@ -81,6 +85,15 @@ public class GameService {
      */
     public List<Game> getRecentGames() {
         return gameRepository.findTop10ByOrderByCreatedAtDesc();
+    }
+    
+    /**
+     * 获取最近创建的100个游戏
+     * @return 最近创建的游戏列表
+     */
+    @Cacheable("recentGames")
+    public List<Game> getRecent100Games() {
+        return gameRepository.findTop100ByOrderByCreatedAtDesc();
     }
     
     /**
@@ -175,6 +188,7 @@ public class GameService {
      * @param description 新的游戏描述
      */
     @Transactional
+    @CacheEvict(value = "recentGames", allEntries = true)
     public void updateGameDescription(Long gameId, String description) {
         log.info("正在更新游戏描述，游戏ID: {}", gameId);
         gameRepository.findById(gameId).ifPresent(game -> {
@@ -190,6 +204,7 @@ public class GameService {
      * @param newRating 新评分
      */
     @Transactional
+    @CacheEvict(value = "recentGames", allEntries = true)
     public void updateGameRating(Long gameId, Double newRating) {
         log.info("正在更新游戏评分，游戏ID: {}, 新评分: {}", gameId, newRating);
         gameRepository.findById(gameId).ifPresent(game -> {
