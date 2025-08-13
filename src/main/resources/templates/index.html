@@ -25,7 +25,6 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: box-shadow 0.3s ease;
-            margin-bottom: 20px;
             break-inside: avoid; /* Prevent cards from being split across columns */
         }
         .review-card:hover {
@@ -139,29 +138,22 @@
             font-weight: 900;
         }
         
-        /* Masonry grid styles */
-        .masonry-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            grid-gap: 20px;
-            align-items: start;
-        }
-        
+        /* Flex layout styles for review cards */
         @media (max-width: 768px) {
-            .masonry-grid {
-                grid-template-columns: 1fr;
+            .review-card {
+                flex: 1 1 100% !important;
             }
         }
         
         @media (min-width: 769px) and (max-width: 1024px) {
-            .masonry-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .review-card {
+                flex: 1 1 calc(50% - 10px) !important;
             }
         }
         
         @media (min-width: 1025px) {
-            .masonry-grid {
-                grid-template-columns: repeat(3, 1fr);
+            .review-card {
+                flex: 1 1 calc(33.333% - 10px) !important;
             }
         }
     </style>
@@ -226,10 +218,10 @@
                 <i class="fas fa-comments"></i> 最新评价
                 <a href="/games" class="text-decoration-none ms-3" style="color: inherit;"><i class="fas fa-gamepad"></i> 游戏库</a>
             </h2>
-            <!-- Masonry Grid for Review Cards -->
-            <div class="masonry-grid">
-                <div class="review-card" th:each="review : ${recentReviews}" th:attr="data-game-id=${review.game.id},data-review-id=${review.id}">
-                    <div class="card-body">
+            <!-- Flex Layout for Review Cards -->
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <div class="review-card" th:each="review : ${recentReviews}" th:attr="data-game-id=${review.game.id},data-review-id=${review.id}" style="flex: 1 1 calc(33.333% - 10px); min-width: 300px;">
+                    <div class="card-body" style="height: auto;">
                         <div class="user-info-container">
                             <div class="user-info">
                                 <div class="avatar" th:text="${#strings.substring(review.username, 0, 1)}">U</div>
