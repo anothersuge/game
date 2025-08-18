@@ -20,11 +20,11 @@ public class GameDescriptionUpdateService {
     private final AiService aiService;
 
     /**
-     * 每小时执行一次，检查并更新游戏描述
+     * 每10小时执行一次，检查并更新游戏描述
      * 对于描述为"暂无描述"的游戏，调用AI服务生成新的描述
      * 应用启动后延迟5分钟开始执行
      */
-    @Scheduled(fixedRate = 3600000, initialDelay = 300000)
+    @Scheduled(fixedRate = 36000000, initialDelay = 300000)
     @Transactional
     public void updateGameDescriptions() {
         log.info("开始执行游戏描述更新任务");

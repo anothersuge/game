@@ -18,10 +18,10 @@ public class ReviewLikeCleanupService {
     private final CacheManager cacheManager;
 
     /**
-     * 每小时执行一次，清理ReviewLike表中超过一天的记录
+     * 每10小时执行一次，清理ReviewLike表中超过一天的记录
      * 首次延迟10分钟执行
      */
-    @Scheduled(fixedRate = 3600000, initialDelay = 600000)
+    @Scheduled(fixedRate = 36000000, initialDelay = 600000)
     public void cleanupExpiredReviewLikes() {
         log.info("开始执行ReviewLike过期记录清理任务");
         
