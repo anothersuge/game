@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.lvluolang</groupId>
 	<artifactId>game</artifactId>
-	<version>1.0</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<name>game</name>
 	<description>绿萝狼实时评价</description>
 	<url/>
@@ -101,18 +101,6 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
-			</plugin>
-			<plugin>
-			<groupId>org.graalvm.buildtools</groupId>
-			<artifactId>native-maven-plugin</artifactId>
-			<version>0.9.28</version>
-			<executions>
-				<execution>
-				<goals>
-					<goal>compile</goal>
-				</goals>
-				</execution>
-			</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
