@@ -22,12 +22,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install native-image
-        run: gu install native-image
+        run: $GRAALVM_HOME/bin/gu install native-image
 
       - name: Build native image
         run: |
           mkdir -p target
-          native-image \
+          $GRAALVM_HOME/bin/native-image \
             --no-fallback \
             --enable-http \
             --enable-https \
