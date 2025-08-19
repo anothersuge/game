@@ -1,0 +1,56 @@
+# Create a GitHub Actions workflow file for compiling a Spring Boot JAR into a Linux native executable using GraalVM
+
+workflow_content = """name: Build Native Image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-native-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21 with GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install native-image
+        run: gu install native-image
+
+      - name: Build native image
+        run: |
+          mkdir -p target
+          native-image \
+            --no-fallback \
+            --enable-http \
+            --enable-https \
+            --initialize-at-build-time \
+            -H:Name=app \
+            -H:Class=org.springframework.boot.loader.JarLauncher \
+            -jar target/app.jar
+
+      - name: Upload native executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: native-app
+          path: app
+"""
+
+# Save the workflow file to .github/workflows/native-image.yml
+import os
+
+os.makedirs(".github/workflows", exist_ok=True)
+with open(".github/workflows/native-image.yml", "w") as f:
+    f.write(workflow_content)
+
+print("GitHub Actions workflow file has been created at .github/workflows/native-image.yml")
+
