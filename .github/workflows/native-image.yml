@@ -22,6 +22,14 @@ jobs:
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.9.9
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
       - name: Build native image
         run: |
           mkdir -p target
@@ -31,7 +39,7 @@ jobs:
             --enable-https \
             --initialize-at-build-time \
             -H:Name=game-1.0 \
-            -H:Class=org.springframework.boot.loader.JarLauncher \
+            -H:Class=org.springframework.boot.loader.PropertiesLauncher \
             -jar target/game-1.0.jar
 
       - name: Upload native executable
