@@ -37,7 +37,7 @@ jobs:
             -jar target/app.jar
 
       - name: Upload native executable
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: native-app
           path: game-1.0
