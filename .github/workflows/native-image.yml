@@ -30,9 +30,9 @@ jobs:
             --enable-http \
             --enable-https \
             --initialize-at-build-time \
-            -H:Name=app \
+            -H:Name=game-1.0 \
             -H:Class=org.springframework.boot.loader.JarLauncher \
-            -jar target/app.jar
+            -jar target/game-1.0.jar
 
       - name: Upload native executable
         uses: actions/upload-artifact@v4
