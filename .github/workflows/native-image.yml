@@ -12,22 +12,20 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21 with GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
           java-version: '21'
           distribution: 'graalvm'
+          components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install native-image
-        run: $GRAALVM_HOME/bin/gu install native-image
 
       - name: Build native image
         run: |
           mkdir -p target
-          $GRAALVM_HOME/bin/native-image \
+          native-image \
             --no-fallback \
             --enable-http \
             --enable-https \
